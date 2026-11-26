@@ -1,0 +1,6 @@
+node_modules/
+.captainstack/
+*.log
+.DS_Store
+# Smoke-test runs and their logs live outside the repo.
+smoke/
