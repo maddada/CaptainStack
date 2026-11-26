@@ -112,6 +112,13 @@ function firstLine(text, max = 100) {
   const line = String(text || '').split('\n').map((l) => l.trim()).find(Boolean) || '';
   return line.length > max ? line.slice(0, max - 1) + '…' : line;
 }
+/** A report's first line worth reading: skips section headers like "✅ **Done:**". */
+function headline(text, max = 140) {
+  const lines = String(text || '').split('\n').map((l) => l.trim()).filter(Boolean);
+  const header = /^[\p{Extended_Pictographic}\uFE0F\s#]*(\*\*)?[\p{L} ]{1,30}:?(\*\*)?:?$/u;
+  const line = (lines.find((l) => !header.test(l)) || lines[0] || '').replace(/^[-*]\s+/, '');
+  return firstLine(line, max);
+}
 function slug(text, max = 40) {
   return (
     String(text || '')
@@ -678,7 +685,7 @@ export function parsePlain(stdout) {
   return { sessionId: null, final: t || null, error: null };
 }
 
-const LIMIT_RE = /usage limit|rate[ _-]?limit|limit (reached|exceeded)|hit your (usage |weekly |session )?limit|out of (credits|usage)|insufficient (credits|quota)|quota (exceeded|reached)|too many requests|\b429\b|upgrade your plan|resets? (at|in) \d/i;
+const LIMIT_RE = /usage limit|rate[ _-]?limit|limit (reached|exceeded)|hit your (usage |weekly |session )?limit|out of (credits|usage)|insufficient (credits|quota)|quota (exceeded|reached)|too many requests|\b429\b|upgrade your plan|buy (more )?credits|not included in your (weekly|monthly|daily) usage|resets? (at|in) \d/i;
 export function looksLimited(text) {
   return LIMIT_RE.test(String(text || ''));
 }
@@ -791,7 +798,7 @@ class Thread {
       pending: this.pending().length,
       startedAt: m.createdAt,
       lastActivity: logAt ? new Date(logAt).toISOString() : m.updatedAt,
-      lastReply: lastReply ? { at: lastReply.at, headline: firstLine(lastReply.text, 140) } : null,
+      lastReply: lastReply ? { at: lastReply.at, headline: headline(lastReply.text) } : null,
       error: m.error || null,
     };
   }
@@ -928,7 +935,7 @@ async function runThread(ctx, sid, tid) {
         const msg = t.addMessage('thread', 'report', result.final.trim(), { turn });
         fs.writeFileSync(t.p('report.md'), result.final.trim() + '\n');
         t.update((m) => (m.status = 'idle'));
-        s.event('report', { thread: t.id, title: meta.title, agent: meta.agent, message: msg.n, headline: firstLine(result.final, 140) });
+        s.event('report', { thread: t.id, title: meta.title, agent: meta.agent, message: msg.n, headline: headline(result.final) });
         continue;
       }
       const why = result.error || `exit code ${result.code}`;
