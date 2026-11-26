@@ -1,0 +1,23 @@
+{
+  "name": "captainstack",
+  "version": "0.1.0",
+  "description": "A portable captain (PM) for any agent CLI or ADE: it plans, hands work to threads on Claude Code, Codex, Cursor CLI, OpenCode, Copilot CLI or Pi, follows them, keeps a work board and an inbox, and reports on Live pages.",
+  "author": {
+    "name": "Mohamad Yahia (maddada)",
+    "url": "https://github.com/maddada"
+  },
+  "homepage": "https://github.com/maddada/CaptainStack",
+  "repository": "https://github.com/maddada/CaptainStack",
+  "license": "MIT",
+  "keywords": ["pm", "coordinator", "captain", "threads", "multi-agent", "skills"],
+  "skills": [
+    "./skills/captain",
+    "./skills/captain-setup",
+    "./skills/captain-inbox",
+    "./skills/captain-threads",
+    "./skills/captain-board",
+    "./skills/captain-ask",
+    "./skills/captain-memory",
+    "./skills/captain-pages"
+  ]
+}

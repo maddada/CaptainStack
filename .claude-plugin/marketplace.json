@@ -1,0 +1,17 @@
+{
+  "name": "captainstack",
+  "owner": {
+    "name": "Mohamad Yahia (maddada)",
+    "url": "https://github.com/maddada"
+  },
+  "description": "CaptainStack: a portable captain (PM) for any agent CLI, as an installable plugin.",
+  "plugins": [
+    {
+      "name": "captainstack",
+      "source": "./",
+      "description": "A captain (PM) that plans, starts and follows threads on any agent CLI, keeps a work board and an inbox, and reports on Live pages.",
+      "category": "productivity",
+      "keywords": ["pm", "coordinator", "captain", "threads", "multi-agent"]
+    }
+  ]
+}
