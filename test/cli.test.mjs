@@ -251,3 +251,22 @@ async function post(url, body) {
   const r = await postRaw(url, body, {});
   return JSON.parse(r.body);
 }
+
+test('a page shown again starts unanswered; inbox done takes page entries in any case', async () => {
+  const { dir, json } = makeRepo();
+  json(['session', 'new', '--title', 'Pages']);
+  const made = json(['page', 'new', '--title', 'Smoke report']);
+  const shown = json(['page', 'show', made.page, '--no-open']);
+  assert.equal(shown.opened, false);
+  assert.match(shown.note, /give the user the URL/);
+  assert.equal((await post(shown.url + '/answers', { answers: { 'What next?': 'go on' } })).ok, true);
+  const again = json(['page', 'show', made.page, '--no-open']);
+  const html = await get(again.url);
+  assert.match(html, /ghostex\.__state\(\{"answered":false/);
+  const open = json(['inbox']).open;
+  assert.equal(open.filter((q) => q.kind === 'page').length, 1);
+  const done = json(['inbox', 'done', 'PAGE-SMOKE-REPORT']);
+  assert.deepEqual(done.done, ['page-smoke-report']);
+  assert.equal(json(['inbox']).open.length, 0);
+  json(['serve', '--stop']);
+});

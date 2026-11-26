@@ -78,7 +78,7 @@ claude plugin marketplace add maddada/CaptainStack
 claude plugin install captainstack@captainstack
 ```
 
-Then, in a repo: `/captain` (or ask "be my captain").
+Then, in a repo: `/captainstack:captain` (plugin skills are namespaced).
 
 </details>
 
@@ -90,7 +90,7 @@ codex plugin marketplace add maddada/CaptainStack
 codex plugin add captainstack@captainstack
 ```
 
-Then: `$captain` (or ask "use the captain skill").
+Then: `$captain` in the prompt (the user-run skills never start on their own).
 
 </details>
 
@@ -113,7 +113,7 @@ Not tested yet: tell us how it goes.
 npx skills@latest add maddada/CaptainStack -a cursor      # or -a opencode, -a pi; omit -a to choose
 ```
 
-Take all eight skills when it asks. Update with `npx skills@latest update`, and run `add` again to
+Take all eight skills when it asks. Start it with `/captain` (Cursor), "use the captain skill" (OpenCode) or `/skill:captain` (Pi). Update with `npx skills@latest update`, and run `add` again to
 pick up new skills.
 
 </details>

@@ -565,9 +565,9 @@ export function recipe(agent, { prompt, resumeId, model, effort, permission, las
     }
     case 'opencode': {
       const a = ['run', '--format', 'json'];
-      let m = model;
-      if (m && effort && !m.includes('#')) m = `${m}#${effort}`;
-      if (m) a.push('--model', m);
+      // OpenCode's effort is a model variant (provider/model#high) that not every model has:
+      // put it in the model when you want one; a bare effort is left out.
+      if (model) a.push('--model', model);
       if (resumeId) a.push('--session', resumeId);
       else if (title) a.push('--title', title);
       if (full) a.push('--dangerously-skip-permissions');
@@ -1541,12 +1541,20 @@ function cmdAnswer(ctx, pos, flags) {
 function cmdInbox(ctx, [verb, ...rest], flags) {
   const s = ctx.s();
   if (verb === 'withdraw' || verb === 'done') {
-    const tags = rest.map((t) => t.toUpperCase());
+    // Asks are Q tags; pages waiting in Needs you are page-<name> (any case works).
+    const want = rest.map((t) => t.toLowerCase());
+    const hit = [];
     updateJson(s.p('inbox.json'), { items: [] }, (ib) => {
-      for (const q of ib.items) if (tags.includes(q.tag) && q.status === 'open') q.status = verb === 'done' ? 'done' : 'withdrawn';
+      for (const q of ib.items) {
+        if (want.includes(q.tag.toLowerCase()) && q.status === 'open') {
+          q.status = verb === 'done' ? 'done' : 'withdrawn';
+          hit.push(q.tag);
+        }
+      }
     });
     renderBoard(s);
-    return { ok: true, [verb]: tags };
+    const notOpen = rest.filter((t) => !hit.some((h) => h.toLowerCase() === t.toLowerCase()));
+    return { ok: true, [verb]: hit, ...(notOpen.length ? { notOpen } : {}) };
   }
   const ib = readJson(s.p('inbox.json'), { items: [] });
   const open = ib.items.filter((q) => q.status === 'open');
@@ -1894,14 +1902,26 @@ function showPage(ctx, s, file, { open = true, kind = 'page' } = {}) {
   const pagesDir = s.p('pages');
   if (path.resolve(path.dirname(file)) !== path.resolve(pagesDir)) fs.copyFileSync(file, path.join(pagesDir, name));
   const pageKey = `page-${name.replace(/\.html?$/i, '')}`;
+  // A new version of an answered page starts unanswered; the old answers stay, renamed.
+  const answered = s.p('answers', `${pageKey}.json`);
+  if (exists(answered)) fs.renameSync(answered, s.p('answers', `${pageKey}.${Date.now()}.json`));
+  fs.rmSync(s.p('answers', `${pageKey}.draft.json`), { force: true });
   updateJson(s.p('inbox.json'), { items: [] }, (ib) => {
     for (const q of ib.items) if (q.kind === 'page' && q.page === name && q.status === 'open') q.status = 'replaced';
     ib.items.push({ tag: pageKey, kind: 'page', page: name, pageKind: kind, title: check.title, detail: '', answers: [], recommended: [], questions: check.tags, status: 'open', createdAt: nowIso() });
   });
   const url = ensureServer(ctx);
   const pageUrl = `${url}/s/${s.id}/pages/${encodeURIComponent(name)}`;
-  if (open) openUrl(pageUrl);
-  return { url: pageUrl, title: check.title, questions: check.tags, warnings: check.warnings, opened: open };
+  const opened = open && !process.env.CAPTAINSTACK_NO_OPEN;
+  if (opened) openUrl(pageUrl);
+  return {
+    url: pageUrl,
+    title: check.title,
+    questions: check.tags,
+    warnings: check.warnings,
+    opened,
+    ...(opened ? {} : { note: 'Not opened here (--no-open or CAPTAINSTACK_NO_OPEN): give the user the URL; do not open it yourself.' }),
+  };
 }
 
 function cmdPage(ctx, [verb, ...rest], flags) {

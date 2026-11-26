@@ -105,7 +105,7 @@ parent agent's session variables (`CLAUDECODE`, `CLAUDE_CODE_*`) so a nested CLI
 | Claude Code | `claude -p --output-format stream-json --verbose --permission-mode auto [--model] [--effort] "<prompt>"` | `--resume <session_id>` | `session_id`, the `result` event |
 | Codex | `codex exec --json --skip-git-repo-check -o last.txt --sandbox workspace-write [-m] [-c model_reasoning_effort=…] "<prompt>"` | `codex exec resume … <thread_id> "<prompt>"` | `thread.started`, the last `agent_message` |
 | Cursor CLI | `cursor-agent -p --output-format stream-json --force --trust [--model] "<prompt>"` | `--resume <chatId>` | `session_id`, the `result` event |
-| OpenCode | `opencode run --format json [--model provider/model#effort] --title "<title>" "<prompt>"` | `--session <id>` | `sessionID`, the last message's text parts |
+| OpenCode | `opencode run --format json [--model provider/model[#variant]] --title "<title>" "<prompt>"` | `--session <id>` | `sessionID`, the last message's text parts |
 | Copilot CLI | `copilot -p "<prompt>" --allow-all-tools --no-ask-user -s [--model]` | `--resume=<id>` | its plain output (untested here) |
 | Pi | `pi -p --mode json [--model provider/id] [--thinking <level>] "<prompt>"` | `--session <id>` | the session event, the last assistant message |
 
