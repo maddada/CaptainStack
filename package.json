@@ -1,0 +1,27 @@
+{
+  "name": "captainstack",
+  "version": "0.1.0",
+  "description": "Portable captain (PM) skills for any agent CLI or ADE",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "captainstack": "skills/captain/scripts/captain.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "skills",
+    ".claude-plugin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/",
+    "check": "node scripts/check.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maddada/CaptainStack.git"
+  }
+}
