@@ -113,7 +113,7 @@ Not tested yet: tell us how it goes.
 npx skills@latest add maddada/CaptainStack -a cursor      # or -a opencode, -a pi; omit -a to choose
 ```
 
-Take all eight skills when it asks. Start it with `/captain` (Cursor), "use the captain skill" (OpenCode) or `/skill:captain` (Pi). Update with `npx skills@latest update`, and run `add` again to
+Take all eight skills when it asks. Start it by asking for it ("use the captain skill", as tested in Cursor CLI and OpenCode) or with `/skill:captain` in Pi. Update with `npx skills@latest update`, and run `add` again to
 pick up new skills.
 
 </details>
