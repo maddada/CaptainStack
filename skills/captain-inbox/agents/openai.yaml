@@ -1,0 +1,5 @@
+interface:
+  display_name: "Captain inbox"
+  short_description: "What needs you from your captain"
+policy:
+  allow_implicit_invocation: false

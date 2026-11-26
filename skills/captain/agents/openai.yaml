@@ -1,0 +1,5 @@
+interface:
+  display_name: "Captain"
+  short_description: "Be this project's captain (PM)"
+policy:
+  allow_implicit_invocation: false

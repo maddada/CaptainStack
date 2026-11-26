@@ -1,0 +1,5 @@
+interface:
+  display_name: "Captain setup"
+  short_description: "The captain's first-turn setup interview"
+policy:
+  allow_implicit_invocation: false
